@@ -4,29 +4,56 @@ from rest_framework.response import Response
 from .serializers import *
 from .models import *
 from rest_framework import status
-
-#from api import User
-
-# Create your views here.
-# @api_view(['POST'])
-#@authentication_classes([])
-#def create_users(request):
-#    name = request.data.get('name')
-#    last_name = request.data.get('last_name')
-#    user_type = request.data.get('user_type')
-#    phone_number = request.data.get('phone_number')
-#    user_name = request.data.get('email')
-#    password = request.data.get('password')
-
-#    if name and last_name and user_type and phone_number and user_name and password:
-#        user = User.objects.create_usercreate_user(user_name=user_name, password=password, name=name, last_name=last_name, user_type=user_type, phone_number=phone_number)
-
-#        return Response({'message': 'Usuario creado exitosamente'}, status=201)
-#    else:
-#        return Response({'error': 'Datos incompletos'}, status=400)
 from rest_framework.decorators import api_view
 from rest_framework import serializers, status
 from rest_framework.response import Response
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
+
+## -> USER - PROMOTOR
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        refresh = self.get_token(self.user)
+        data['refresh'] = str(refresh)
+        data['access'] = str(refresh.access_token)
+        return data
+
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
+
+@api_view(['POST'])
+def create_users(request):
+    print("Datos recibidos en la solicitud:")
+    print(request.data)
+    
+    nombre = request.data.get('nombre')
+    apellido = request.data.get('apellido')
+    tipoUser = request.data.get('tipoUser')
+    email = request.data.get('email')
+    password = request.data.get('password')
+
+    if nombre and apellido:
+        user = UserPromotor.objects.create_user(email=email, password=password, nombre=nombre, apellido=apellido, tipoUser=tipoUser)
+
+        # Generar el token de acceso para el usuario recién creado
+        token_serializer = MyTokenObtainPairSerializer(data={'email': email, 'password': password})
+        token_serializer.is_valid(raise_exception=True)
+        token_data = token_serializer.validated_data
+        access_token = token_data['access']
+
+        return Response({'message': 'Usuario creado exitosamente', 'access_token': access_token}, status=201)
+    else:
+        return Response({'error': 'Datos incompletos'}, status=400)
+
+@api_view(['GET'])
+def get_all_users(request):
+    users = UserPromotor.objects.all()
+    serializer = UserSerializer(users, many=True)
+    return Response(serializer.data)
+
+
+## -> EVENTOS
 
 @api_view(['POST'])
 def create_event(request):
