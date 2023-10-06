@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
+    'rest_framework.authtoken',
     'corsheaders',
     'api',
 ]
@@ -83,7 +84,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'mssql',
         'NAME': 'NexusMeet',
-        'HOST': 'DELTA',
+        'HOST': 'SYNTAXV',
         'OPTIONS': {
             'driver': 'ODBC Driver 17 for SQL Server',
             'trusted_connection': 'yes',
@@ -137,5 +138,19 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:4200"  # Reemplaza con la URL de tu aplicación Angular
 ]
 
+CORS_ALLOW_ALL_ORIGINS = True
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+AUTH_USER_MODEL = 'api.UserPromotor'
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+}

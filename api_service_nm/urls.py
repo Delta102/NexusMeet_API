@@ -24,8 +24,15 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('events/', get_all_events, name='event-list'),
     path('events/create/', create_event, name='create-event'),
-    path('create-user/', create_users, name='create_users'),
-    path('get-users/', get_all_users, name='get_all_users'),
+    path('update-events/', update_event, name='update-event'),
+    path('delete-events/<int:event_id>', delete_event, name='delete-events'),
+    path('events-by-user/<int:user_id>', get_all_events_by_user, name='events-by-user'),
+
+    path('create-user/', create_user_promotor, name='create_users'),
+    path('login/', login_view, name='login'),
+    path('logout/', logout_view, name='logout'),
+    path('get-current-user/', get_current_user, name='get_all_users'),
+    path('get-user/<int:user_id>', get_user_by_id, name='get_user'),
 ]
 
 if settings.DEBUG:

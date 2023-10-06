@@ -1,59 +1,107 @@
-from django.shortcuts import render
 from rest_framework.decorators import *
 from rest_framework.response import Response
 from .serializers import *
 from .models import *
 from rest_framework import status
 from rest_framework.decorators import api_view
-from rest_framework import serializers, status
+from rest_framework.authentication import TokenAuthentication
+from rest_framework import status
+from django.contrib.auth.hashers import make_password
 from rest_framework.response import Response
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from rest_framework_simplejwt.views import TokenObtainPairView
+from django.contrib.auth import login, authenticate
+from rest_framework.authtoken.models import Token
+from rest_framework.permissions import IsAuthenticated
 
-## -> USER - PROMOTOR
-class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
-    def validate(self, attrs):
-        data = super().validate(attrs)
-        refresh = self.get_token(self.user)
-        data['refresh'] = str(refresh)
-        data['access'] = str(refresh.access_token)
-        return data
 
-class MyTokenObtainPairView(TokenObtainPairView):
-    serializer_class = MyTokenObtainPairSerializer
 
 @api_view(['POST'])
-def create_users(request):
-    print("Datos recibidos en la solicitud:")
-    print(request.data)
+def create_user_promotor(request):
+    if request.method == 'POST':
+        user_promotor_data = request.data
+        print("Datos del Promotor")
+        print(user_promotor_data)
+        
+        password = user_promotor_data.get('password')
+        print('Pass:' + password)
+        user_promotor_data['password'] = make_password(password)
+        print(user_promotor_data)
+        user_promotor_serializer = UserPromotorSerializer(data=user_promotor_data)
+        user_promotor_serializer.is_valid(raise_exception=True)
+        
+        user_promotor_serializer.save()
+        return Response(user_promotor_serializer.data, status=status.HTTP_201_CREATED)
     
-    nombre = request.data.get('nombre')
-    apellido = request.data.get('apellido')
-    tipoUser = request.data.get('tipoUser')
-    email = request.data.get('email')
-    password = request.data.get('password')
+    return Response(user_promotor_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    if nombre and apellido:
-        user = UserPromotor.objects.create_user(email=email, password=password, nombre=nombre, apellido=apellido, tipoUser=tipoUser)
 
-        # Generar el token de acceso para el usuario recién creado
-        token_serializer = MyTokenObtainPairSerializer(data={'email': email, 'password': password})
-        token_serializer.is_valid(raise_exception=True)
-        token_data = token_serializer.validated_data
-        access_token = token_data['access']
+@api_view(['POST'])
+def login_view(request):
+    if request.method == 'POST':
+        username = request.data.get('username')
+        password = request.data.get('password')
 
-        return Response({'message': 'Usuario creado exitosamente', 'access_token': access_token}, status=201)
-    else:
-        return Response({'error': 'Datos incompletos'}, status=400)
+        print(password+'hola')
+        try:
+            user = UserPromotor.objects.get(username=username)
+            print(user)
+            user = authenticate(request, username=username, password=password)
+        except UserPromotor.DoesNotExist:
+            user = None
 
-@api_view(['GET'])
-def get_all_users(request):
-    users = UserPromotor.objects.all()
-    serializer = UserSerializer(users, many=True)
-    return Response(serializer.data)
+        if user is not None:
+            login(request, user)
+
+            # Generar un token de autenticación para el usuario
+            token, created = Token.objects.get_or_create(user=user)
+
+            # Devolver el token en la respuesta
+            return Response({'token': token.key, 'message': 'Inicio de sesión exitoso'}, status=status.HTTP_200_OK)
+        else:
+            # Verificar si el error se debe a un usuario no encontrado o una contraseña incorrecta
+            try:
+                user = UserPromotor.objects.get(username=username)
+                return Response({'message': 'Contraseña incorrecta'}, status=status.HTTP_401_UNAUTHORIZED)
+            except UserPromotor.DoesNotExist:
+                return Response({'message': 'Nombre de usuario no encontrado'}, status=status.HTTP_401_UNAUTHORIZED)
+            
+            
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def logout_view(request):
+    # Elimina el token de autenticación del usuario actual
+    Token.objects.filter(user=request.user).delete()
+    return Response({'message': 'Logout exitoso'}, status=status.HTTP_200_OK)
 
 
 ## -> EVENTOS
+
+@api_view(['PUT'])
+def update_event(request, event_id):
+    try:
+        event = Event.objects.get(id=event_id)
+    except Event.DoesNotExist:
+        return Response({"error": "El evento no existe."}, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'PUT':
+        serializer = EventSerializer(event, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['DELETE'])
+def delete_event(request, event_id):
+    try:
+        
+        event = Event.objects.get(id=event_id)
+    except Event.DoesNotExist:
+        return Response({"error": "El evento no existe."}, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'DELETE':
+        event.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 @api_view(['POST'])
 def create_event(request):
@@ -74,7 +122,41 @@ def create_event(request):
         
 
 @api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_current_user(request):
+    try:
+        user_data ={
+            'username': request.user.username,
+            'id': request.user.id,
+            'user_type': request.user.user_type,
+        }
+        return Response(user_data, status=status.HTTP_200_OK)
+    except UserPromotor.DoesNotExist:
+        return Response({'error: El usuario no existe'}, status=status.HTTP_404_NOT_FOUND)
+
+
+        
+
+@api_view(['GET'])
 def get_all_events(request):
     events = Event.objects.all()
     serializer = EventSerializer(events, many=True)
+    return Response(serializer.data)
+
+
+
+@api_view(['GET'])
+def get_all_events_by_user(request, user_id):
+    events = Event.objects.filter(creator = user_id)
+    serializer = EventSerializer(events, many=True)
+    return Response(serializer.data)
+
+
+
+@api_view(['GET'])
+def get_user_by_id(request, user_id):
+    user = UserPromotor.objects.get(id = user_id)
+
+    serializer = UserPromotorSerializer(user)
     return Response(serializer.data)
