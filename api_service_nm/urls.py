@@ -17,12 +17,15 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from api.views import *
+from api_events.views import *
+from api_entrys.views import *
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('events/', get_all_events, name='event-list'),
+    path('event/<int:event_id>', get_event_by_id, name='event'),
     path('events/create/', create_event, name='create-event'),
     path('update-events/', update_event, name='update-event'),
     path('delete-events/<int:event_id>', delete_event, name='delete-events'),

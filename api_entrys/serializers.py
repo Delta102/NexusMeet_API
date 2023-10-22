@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import *
 
-class UserPromotorSerializer(serializers.ModelSerializer):
+class EntrySerializer(serializers.ModelSerializer):
     class Meta:
-        model = UserPromotor
+        model = Entry
         fields = '__all__'
