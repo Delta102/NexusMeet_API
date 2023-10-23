@@ -23,14 +23,20 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls)
+    ,
+    # PATH PARA EVENTS
     path('events/', get_all_events, name='event-list'),
     path('event/<int:event_id>', get_event_by_id, name='event'),
     path('events/create/', create_event, name='create-event'),
     path('update-events/', update_event, name='update-event'),
     path('delete-events/<int:event_id>', delete_event, name='delete-events'),
     path('events-by-user/<int:user_id>', get_all_events_by_user, name='events-by-user'),
-
+    
+    # PATH PARA ENTRYS
+    path('entrys/create/', create_entry, name='create-entry'),
+    
+    # PATH PARA USERS
     path('create-user/', create_user_promotor, name='create_users'),
     path('login/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),
