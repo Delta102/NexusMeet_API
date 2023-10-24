@@ -1,15 +1,19 @@
 from rest_framework.decorators import *
 from rest_framework.response import Response
+from rest_framework import status
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.permissions import IsAuthenticated
+
+from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.tokens import RefreshToken
+
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
+
 from .serializers import *
 from .models import *
-from rest_framework import status
-from rest_framework.decorators import api_view
-from rest_framework.authentication import TokenAuthentication
-from django.contrib.auth.hashers import make_password
-from rest_framework.response import Response
-from django.contrib.auth import login, authenticate
-from rest_framework.authtoken.models import Token
-from rest_framework.permissions import IsAuthenticated
+
+
 
 # -> USUARIOS API VIEWS:
 
@@ -38,53 +42,37 @@ def login_view(request):
     if request.method == 'POST':
         username = request.data.get('username')
         password = request.data.get('password')
-
-        print(password+'hola')
-        try:
-            user = UserPromotor.objects.get(username=username)
-            print(user)
-            user = authenticate(request, username=username, password=password)
-        except UserPromotor.DoesNotExist:
-            user = None
-
+        print(username, password)
+        user = authenticate(username = username, password = password)
+        
         if user is not None:
             login(request, user)
-
-            # Generar un token de autenticación para el usuario
-            token, created = Token.objects.get_or_create(user=user)
-
-            # Devolver el token en la respuesta
-            return Response({'token': token.key, 'message': 'Inicio de sesión exitoso'}, status=status.HTTP_200_OK)
+            #payload = jwt_payload_handler(user)
+            #token = jwt_encode_handler(payload)
+            return Response({'token': 'sadf', 'user_id': user.id}, status=status.HTTP_200_OK)
         else:
-            # Verificar si el error se debe a un usuario no encontrado o una contraseña incorrecta
-            try:
-                user = UserPromotor.objects.get(username=username)
-                return Response({'message': 'Contraseña incorrecta'}, status=status.HTTP_401_UNAUTHORIZED)
-            except UserPromotor.DoesNotExist:
-                return Response({'message': 'Nombre de usuario no encontrado'}, status=status.HTTP_401_UNAUTHORIZED)
-            
+            return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+
             
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def logout_view(request):
-    # Elimina el token de autenticación del usuario actual
-    Token.objects.filter(user=request.user).delete()
-    return Response({'message': 'Logout exitoso'}, status=status.HTTP_200_OK)
+    # Invalida el token de acceso
+    try:
+        refresh_token = RefreshToken(request.data['token'])
+        refresh_token.blacklist()  # Agrega el token a la lista negra para invalidarlo
+        return Response(status=status.HTTP_205_RESET_CONTENT)
+    except Exception as e:
+        return Response(status=status.HTTP_400_BAD_REQUEST, data={'error': 'Invalid token'})
 
 
 @api_view(['GET'])
-@authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def get_current_user(request):
-    try:
-        user_data ={
-            'username': request.user.username,
-            'id': request.user.id,
-            'user_type': request.user.user_type,
-        }
-        return Response(user_data, status=status.HTTP_200_OK)
-    except UserPromotor.DoesNotExist:
-        return Response({'error: El usuario no existe'}, status=status.HTTP_404_NOT_FOUND)
+    print('Petición')
+    user = request.user
+    serializer = UserPromotorSerializer(user)
+    return Response(serializer.data)
 
 
 

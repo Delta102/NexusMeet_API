@@ -22,6 +22,11 @@ from api_entrys.views import *
 from django.conf import settings
 from django.conf.urls.static import static
 
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
+
 urlpatterns = [
     path('admin/', admin.site.urls)
     ,
@@ -38,6 +43,8 @@ urlpatterns = [
     
     # PATH PARA USERS
     path('create-user/', create_user_promotor, name='create_users'),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('login/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),
     path('get-current-user/', get_current_user, name='get_all_users'),
