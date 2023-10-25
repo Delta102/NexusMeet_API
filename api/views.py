@@ -9,6 +9,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
 
 from .serializers import *
 from .models import *
@@ -32,10 +33,25 @@ def create_user_promotor(request):
         user_promotor_serializer.is_valid(raise_exception=True)
         
         user_promotor_serializer.save()
+        print(user_promotor_serializer.data)
         return Response(user_promotor_serializer.data, status=status.HTTP_201_CREATED)
     
     return Response(user_promotor_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['POST'])
+def update_user(request, id):
+    try:
+        user_promotor = UserPromotor.objects.get(id = pk)
+    except UserPromotor.DoesNotExist:
+        return Response(status = status.HTTP_404_NOT_FOUND)
+    
+    if request.method == 'PUT':
+        serializer = UserPromotor(user_promotor, data = request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status.HTTP_200_OK)
+        return Response(serializer.errors, status = status.HTTP_400_BAD_REQUEST)
+    
 
 @api_view(['POST'])
 def login_view(request):
@@ -82,3 +98,20 @@ def get_user_by_id(request, user_id):
 
     serializer = UserPromotorSerializer(user)
     return Response(serializer.data)
+    
+
+#@api_view(['POST'])
+#def add_attendee(request):
+    #try:
+        # Buscar el evento y el usuario en base a los IDs proporcionados en la URL
+        #event = Event.objects.get(pk=event_id)
+        #user = UserPromotor.objects.get(pk=user_id)
+
+        # Agregar al usuario como asistente al evento
+        #event.attendees.add(user)
+
+        #return Response({'message': f'El usuario {user.username} ha sido agregado como asistente al evento {event.event_name}'}, status=status.HTTP_201_CREATED)
+    #except Event.DoesNotExist:
+        #return Response({'error': 'El evento no existe'}, status=status.HTTP_404_NOT_FOUND)
+    #except UserPromotor.DoesNotExist:
+        #return Response({'error': 'El usuario no existe'}, status=status.HTTP_404_NOT_FOUND)

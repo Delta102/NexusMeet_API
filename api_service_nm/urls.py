@@ -40,16 +40,20 @@ urlpatterns = [
     
     # PATH PARA ENTRYS
     path('entrys/create/', create_entry, name='create-entry'),
+    path('entrys/get-entrys-by-user/<int:user_id>', get_entrys_by_user, name = 'entrys-by-user'),
     
     # PATH PARA USERS
-    path('create-user/', create_user_promotor, name='create_users'),
+    path('create-user/', create_user_promotor, name='create_user_promotor'),
+    path('update-user/<int:user_id>', update_user, name='update_user'),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('login/', login_view, name='login'),
-    path('logout/', logout_view, name='logout'),
-    path('get-current-user/', get_current_user, name='get_all_users'),
-    path('get-user/<int:user_id>', get_user_by_id, name='get_user'),
+    #path('user/aff-attenee/<int:event_id>/<int:user_id>/', add_attendee(), name='add-attendee'),
+    path('login/', login_view, name='login_view'),
+    path('logout/', logout_view, name='logout_view'),
+    path('get-current-user/', get_current_user, name='get_current_user'),
+    path('get-user/<int:user_id>', get_user_by_id, name='get_user_by_id'),
 ]
+
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

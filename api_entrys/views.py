@@ -35,6 +35,8 @@ def create_entry(request):
         if serializer.is_valid():
             serializer.save()
             entry = get_entry(serializer.instance.id)
+            entry.event_name = event.event_name
+            entry.save()
             add_qr(entry)
             update_event_by_entry(event, entry_data['quantity'])
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -45,7 +47,7 @@ def get_entry(entry_id):
     return Entry.objects.get(id = entry_id)
 
 def add_qr(entry):
-    data = 'quantity: ' + str(entry.quantity) + ' event_id: ' + str(entry.event_id) + ' user_id: ' + str(entry.user_id)
+    data = 'quantity: ' + str(entry.quantity) + ' event_id: ' + str(entry.event_id) + ' event_name: ' + str(entry.event_name) + ' user_id: ' + str(entry.user_id)
     qr_generator(data, entry)
 
 def getEvent(event_id):
@@ -87,3 +89,13 @@ def qr_generator(data, entry):
     
     entry.image_qr.save(f'entry_qr_{entry.id}.png', ContentFile(buffer.getvalue()))
     entry.save()
+    
+   
+@api_view(['GET'])
+def get_entrys_by_user(request, user_id):
+    try:
+        entries = Entry.objects.filter(user_id = user_id)
+        serializer = EntrySerializer(entries, many = True)
+        return Response(serializer.data)
+    except Entry.DoesNotExist:
+        return Response({ "message": "No se encontraron entradas para el usuario" })
