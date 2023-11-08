@@ -29,8 +29,15 @@ def create_entry(request):
         event = getEvent(entry_data['event'])
         
         entry_data['price_total'] = str(float(entry_data['quantity']) * (event.entry_price))
+            
+        if event.capacity <= 0:
+            print('Error')
+            return Response({"message": 'Ya no hay entradas disponibles para este evento'}, status=status.HTTP_400_BAD_REQUEST)
         
         serializer = EntrySerializer(data=entry_data)
+            
+        print('Datos enviados: ')
+        print(entry_data)
         
         if serializer.is_valid():
             serializer.save()

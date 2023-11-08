@@ -73,7 +73,7 @@ class EventTestCase(TestCase):
         
     def test_get_all_events(self):
         factory = APIRequestFactory()
-        request = factory.get('events/')  # Asegúrate de que la URL coincida con la de tu vista
+        request = factory.get('events/')
         response = get_all_events(request)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
