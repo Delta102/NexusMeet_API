@@ -15,7 +15,6 @@ class Event(models.Model):
     entry_price = models.FloatField()
 
     creator = models.ForeignKey(UserPromotor, on_delete=models.CASCADE, related_name='created_events')
-    attendees = models.ManyToManyField(UserPromotor, through=Entry, related_name='attending_events')
 
 class Punctuation(models.Model):
     average_score = models.IntegerField()
