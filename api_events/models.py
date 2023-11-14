@@ -6,7 +6,7 @@ from api_entrys.models import Entry
 class Event(models.Model):
     date_event_start = models.DateTimeField()
     event_name = models.CharField(max_length=200)
-    event_image = models.ImageField(upload_to='images/')
+    event_image = models.ImageField(upload_to='images/', blank=True, null = True)
     description = models.CharField(max_length=400)
     capacity = models.IntegerField()
     latitude = models.FloatField(null = True, blank = True) 
