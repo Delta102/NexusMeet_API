@@ -8,7 +8,9 @@ __pycache__/
 # Distribution / packaging
 .Python
 env/
-media/
+media/entry_qr_codes/
+media/images/
+media/profile/
 build/
 develop-eggs/
 dist/
