@@ -167,21 +167,21 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'file': {
-            'level': 'INFO',  # Puedes ajustar el nivel de registro según tus necesidades (DEBUG, INFO, WARNING, ERROR, etc.)
-            'class': 'logging.FileHandler',
-            'filename': 'C:/Users/alfre/Downloads/registros.log',  # Reemplaza con la ruta de tu archivo de registros
-        },
-    },
-    'root': {
-        'handlers': ['file'],
-        'level': 'DEBUG',
-    },
-}
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'file': {
+#             'level': 'INFO',  # Puedes ajustar el nivel de registro según tus necesidades (DEBUG, INFO, WARNING, ERROR, etc.)
+#             'class': 'logging.FileHandler',
+#             'filename': 'C:/Users/alfre/Downloads/registros.log',  # Reemplaza con la ruta de tu archivo de registros
+#         },
+#     },
+#     'root': {
+#         'handlers': ['file'],
+#         'level': 'DEBUG',
+#     },
+# }
 
 
 #JWT_AUTH = {
