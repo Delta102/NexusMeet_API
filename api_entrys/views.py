@@ -106,3 +106,14 @@ def get_entrys_by_user(request, user_id):
         return Response(serializer.data)
     except Entry.DoesNotExist:
         return Response({ "message": "No se encontraron entradas para el usuario" })
+
+
+
+# @api_view(['GET'])
+# def register_entry(request, data):
+#     try:
+#         # entries = Entry.objects.filter(user_id = user_id)
+#         # serializer = EntrySerializer(entries, many = True)
+#         # return Response(serializer.data)
+#     except Entry.DoesNotExist:
+#         return Response({ "message": "Error con el QR" })
