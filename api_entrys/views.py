@@ -131,6 +131,16 @@ def qr_scanned(request):
     else:
         return Response({'message': 'Invalid method'}, status=400)
 
+@api_view(['GET'])
+def get_assistant(request, event_id):
+    try:
+        scanned_values = ScannedValue.objects.filter(event_id=event_id)
+        user_ids = [scanned_value.user_id for scanned_value in scanned_values]
+        user_promotors = UserPromotor.objects.filter(id__in=user_ids)
+        usernames = [user_promotor.username for user_promotor in user_promotors]
+        return Response({'usernames': usernames})
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
    
 @api_view(['GET'])
 def get_entrys_by_user(request, user_id):
