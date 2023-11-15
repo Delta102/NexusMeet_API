@@ -14,3 +14,4 @@ class ScannedValue(models.Model):
     quantity = models.IntegerField()
     event_id = models.IntegerField()
     user_id = models.IntegerField()
+    entry_id = models.IntegerField()
