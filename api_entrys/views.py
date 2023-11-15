@@ -116,14 +116,17 @@ def qr_scanned(request):
         
         print(f'Valores: {event_id}, {user_id}, {quantity}, {entry_id}')
 
-        ScannedValue.objects.create(
-            quantity=quantity,
-            event_id=event_id,
-            user_id=user_id,
-            entry_id = entry_id,
-        )
-
-        return Response({'message': 'Data processed successfully'})
+        try:
+            existing_entry = ScannedValue.objects.get(entry_id=entry_id)
+            return Response({'message': 'Attendance already registered'})
+        except ScannedValue.DoesNotExist:
+            ScannedValue.objects.create(
+                quantity=quantity,
+                event_id=event_id,
+                user_id=user_id,
+                entry_id=entry_id
+            )
+            return Response({'message': 'Data processed successfully'})
 
     else:
         return Response({'message': 'Invalid method'}, status=400)
