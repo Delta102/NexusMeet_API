@@ -40,7 +40,6 @@ urlpatterns = [
     
     # PATH PARA ENTRYS
     path('entrys/create/', create_entry, name='create-entry'),
-    path('entrys/create/', create_entry, name='create-entry'),
     path('qrvalue/', qr_scanned, name='qr_value'),
     path('entrys/get-entrys-by-user/<int:user_id>', get_entrys_by_user, name = 'entrys-by-user'),
     

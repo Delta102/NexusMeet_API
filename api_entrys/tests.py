@@ -22,6 +22,7 @@ class EntryTestCase(APITestCase):
         self.user_promotor = UserPromotor.objects.create(id=1, user_type="promotor", username="promotor1", email="promotor1")
 
         self.event = Event.objects.create(
+            id=1,
             creator=self.user_promotor,
             date_event_start="2023-10-25T12:00:00Z",
             event_image=SimpleUploadedFile("test_image.jpg", b"file_content"),
@@ -33,8 +34,27 @@ class EntryTestCase(APITestCase):
         )
 
     def test_create_entry_successful(self):
+
+        self.user_promotor = UserPromotor.objects.create(id=10, user_type="promotor", username="promotor20", email="promotor20")
+
+        self.event = Event.objects.create(
+            id=654321,
+            creator=self.user_promotor,
+            date_event_start="2023-10-25T12:00:00Z",
+            event_image=SimpleUploadedFile("test_image.jpg", b"file_content"),
+            event_name="Mi Evento de Prueba",
+            description="Este es un evento de prueba.",
+            capacity=100,
+            entry_type="Gratis",
+            entry_price=0.0,
+        )
+
         entry_data = {
             "event": self.event.id,
+            "price_total": 1,
+            "image_qr": None,
+            "event_name": 'Mi Evento de Prueba',
+            "user": self.user_promotor.id,
             "quantity": 2,
         }
 

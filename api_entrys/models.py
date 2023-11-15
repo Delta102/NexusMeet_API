@@ -10,5 +10,7 @@ class Entry(models.Model):
     event_name = models.CharField(max_length = 200, null = True, blank = True)
     user = models.ForeignKey(UserPromotor, on_delete = models.CASCADE)
 
-class Testing(models.Model):
-    text = models.CharField()
+class ScannedValue(models.Model):
+    quantity = models.IntegerField()
+    event_id = models.IntegerField()
+    user_id = models.IntegerField()

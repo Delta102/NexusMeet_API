@@ -25,10 +25,10 @@ class UserPromotorTests(TestCase):
             'password': 'password123',
         }
 
-    #def test_create_user_promotor(self):
-    #   url = reverse('create_user_promotor')
-    #    response = self.client.post(url, self.user_data, format='json')
-    #    self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+    def test_create_user_promotor(self):
+        url = reverse('create_user_promotor')
+        response = self.client.post(url, self.user_data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     #def test_update_user(self):
     #    url = reverse('update_user', args=[self.user.id])
