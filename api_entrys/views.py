@@ -55,7 +55,7 @@ def get_entry(entry_id):
     return Entry.objects.get(id = entry_id)
 
 def add_qr(entry):
-    data = 'quantity: ' + str(entry.quantity) + ' event_id: ' + str(entry.event_id) + ' event_name: ' + str(entry.event_name) + ' user_id: ' + str(entry.user_id)
+    data = 'quantity: ' + str(entry.quantity) + ' event_id: ' + str(entry.event_id) + ' event_name: ' + str(entry.event_name) + ' user_id: ' + str(entry.user_id) + ' entry_id: ' + str(entry.id)
     qr_generator(data, entry)
 
 def getEvent(event_id):
