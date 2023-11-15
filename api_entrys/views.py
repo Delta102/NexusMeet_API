@@ -96,7 +96,17 @@ def qr_generator(data, entry):
     
     entry.image_qr.save(f'entry_qr_{entry.id}.png', ContentFile(buffer.getvalue()))
     entry.save()
-    
+
+
+@api_view(['GET'])
+def qr_scanned(request):
+    if request.method == "POST":
+        scanned_value = request.data.get('scannedValue')
+        print(f'Scanned value: {scanned_value}')
+        return Response({'message': 'Value received successfully'}, status=200)
+    else:
+        return Response({'message': 'Invalid method'}, status=400)
+
    
 @api_view(['GET'])
 def get_entrys_by_user(request, user_id):
