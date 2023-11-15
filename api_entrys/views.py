@@ -110,12 +110,12 @@ def qr_scanned(request):
         # except json.JSONDecodeError:
         #     return Response({'error': 'Invalid JSON'})
 
-        event_id = scanned_value.get('event_id')
-        user_id = scanned_value.get('user_id')
+        event_id = scanned_value['event_id']
+        user_id = scanned_value['user_id']
         print(f'Valores: {event_id}, {user_id}')
 
         ScannedValue.objects.create(
-            quantity=scanned_value.get('quantity'),
+            quantity=scanned_value['quantity'],
             event_id = event_id,
             user_id = user_id
         )
