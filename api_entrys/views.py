@@ -98,7 +98,7 @@ def qr_generator(data, entry):
     entry.save()
 
 
-@api_view(['GET'])
+@api_view(['POST'])
 def qr_scanned(request):
     if request.method == "POST":
         scanned_value = request.data.get('scannedValue')
