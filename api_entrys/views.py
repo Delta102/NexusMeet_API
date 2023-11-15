@@ -109,7 +109,7 @@ def qr_scanned(request):
             quantity = int(scanned_value.split('quantity: ')[1].split(' ')[0])
             event_id = int(scanned_value.split('event_id: ')[1].split(' ')[0])
             user_id = int(scanned_value.split('user_id: ')[1].split(' ')[0])
-            entry_id = int(scanned_value.split('entry_: ')[1])
+            entry_id = int(scanned_value.split('entry_id: ')[1])
             
         except (IndexError, ValueError):
             return Response({'error': 'Invalid format'}, status=400)
