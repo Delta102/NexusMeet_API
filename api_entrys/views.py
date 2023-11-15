@@ -119,7 +119,8 @@ def qr_scanned(request):
         ScannedValue.objects.create(
             quantity=quantity,
             event_id=event_id,
-            user_id=user_id
+            user_id=user_id,
+            entry_id = entry_id,
         )
 
         return Response({'message': 'Data processed successfully'})
