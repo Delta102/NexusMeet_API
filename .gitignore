@@ -9,7 +9,6 @@ __pycache__/
 .Python
 env/
 media/entry_qr_codes/
-media/images/
 media/profile/
 build/
 develop-eggs/
