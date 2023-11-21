@@ -75,3 +75,21 @@ def get_event_by_id(request, event_id):
 
     serializer = EventSerializer(event)
     return Response(serializer.data)
+
+@api_view(['POST'])
+def post_punctuation(request, event_id):
+    if request.method == 'POST':
+        print("Datos recibidos en la solicitud:")
+        print(request.data)
+
+        serializer = EventSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            # Agregar un registro de depuración para ver los datos serializados
+            print("Datos serializados:")
+            print(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            print("Errores de validación:")
+            print(serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

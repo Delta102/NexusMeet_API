@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
+    'storages',
     'api',
     'api_events',
     'api_entrys'
@@ -234,3 +235,10 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication', 
     ),
 }
+
+# AWS_STORAGE_BUCKET_NAME = 'nm-imagessystem'
+# AWS_ACCESS_KEY_ID = 'AKIAXUKUZT6MROKPDEUJ'
+# AWS_SECRET_ACCESS_KEY = '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'
+# AWS_S3_REGION_NAME = 'sa-east-1'  # Ejemplo: 'us-east-1'
+
+# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'

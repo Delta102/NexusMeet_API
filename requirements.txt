@@ -12,7 +12,6 @@ packaging==23.2
 Pillow==10.0.1
 psycopg2-binary==2.9.9
 PyJWT==1.7.1
-pyodbc==4.0.39
 pypng==0.20220715.0
 pytz==2023.3.post1
 qrcode==7.4.2

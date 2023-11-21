@@ -1,4 +1,6 @@
 from django.db import models
+from storages.backends.s3boto3 import S3Boto3Storage
+
 from api.models import UserPromotor
 from api_entrys.models import Entry
 
@@ -18,5 +20,6 @@ class Event(models.Model):
 
 class Punctuation(models.Model):
     average_score = models.IntegerField()
+    comment = models.CharField(max_length=500, blank = True, null= True)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     user = models.ForeignKey(UserPromotor, on_delete=models.CASCADE)

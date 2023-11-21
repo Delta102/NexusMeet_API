@@ -21,3 +21,9 @@ class EventSerializer(serializers.ModelSerializer):
         })
 
         return data
+
+
+class PunctuationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Punctuation
+        fields = '__all__'
