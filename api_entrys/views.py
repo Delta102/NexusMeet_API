@@ -3,7 +3,9 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view
 
 from django.core.files.base import ContentFile
-from django.core.files.storage import default_storage
+# from django.core.files.storage import default_storage
+
+from api_events.serializers import *
 
 from PIL import Image
 import qrcode
@@ -139,6 +141,17 @@ def get_assistant(request, event_id):
         user_promotors = UserPromotor.objects.filter(id__in=user_ids)
         usernames = [user_promotor.username for user_promotor in user_promotors]
         return Response({'usernames': usernames})
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
+    
+@api_view(['GET'])
+def get_assists(request, user_id):
+    try:
+        scanned_values = ScannedValue.objects.filter(user_id=user_id)
+        event_ids = [scanned_value.event_id for scanned_value in scanned_values]
+        events = Event.objects.filter(id__in=event_ids)
+        serialized_events = EventSerializer(events, many=True)
+        return Response(serialized_events.data)
     except Exception as e:
         return Response({'error': str(e)}, status=500)
    

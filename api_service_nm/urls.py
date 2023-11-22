@@ -43,6 +43,7 @@ urlpatterns = [
     path('qrvalue/', qr_scanned, name='qr_value'),
     path('get-assitants/<int:event_id>', get_assistant, name='get_assistant'),
     path('entrys/get-entrys-by-user/<int:user_id>', get_entrys_by_user, name = 'entrys-by-user'),
+    path('get-assists-by-user/<int:user_id>', get_assists, name = 'assists-by-user'),
     
     # PATH PARA USERS
     path('create-user/', create_user_promotor, name='create_user_promotor'),
